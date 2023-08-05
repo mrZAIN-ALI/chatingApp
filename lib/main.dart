@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+//
+import './screen/chat_Screen.dart';
 
 void main() {
   //asdasdasd
@@ -8,7 +10,6 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -52,7 +53,7 @@ class MyApp extends StatelessWidget {
                 fontWeight: FontWeight.normal),
           ),
         ),
-        home: Text("HElloa"),
+        home: ChatScreen(),
         routes: {},
       ),
     );
