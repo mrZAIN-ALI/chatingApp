@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:great_place/firebase_options.dart';
 //
+import 'package:great_place/screen/auth_Screen.dart';
+import 'package:great_place/firebase_options.dart';
 import './screen/chat_Screen.dart';
 
 Future<void> main() async {
@@ -58,7 +59,7 @@ class MyApp extends StatelessWidget {
                 fontWeight: FontWeight.normal),
           ),
         ),
-        home: ChatScreen(),
+        home: Auth_Scren(),
         routes: {},
       ),
     );
