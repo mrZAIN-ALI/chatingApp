@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 //
 import 'package:great_place/screen/auth_Screen.dart';
 import 'package:great_place/firebase_options.dart';
@@ -29,7 +30,7 @@ class MyApp extends StatelessWidget {
             brightness: Brightness.light,
             primary: Color(0xFF8d67f8),
             onPrimary: Colors.white,
-            secondary:Color.fromARGB(255, 147, 118, 226),
+            secondary: Color.fromARGB(255, 147, 118, 226),
             onSecondary: Colors.white,
             error: Colors.red,
             onError: Colors.black,
@@ -59,7 +60,15 @@ class MyApp extends StatelessWidget {
                 fontWeight: FontWeight.normal),
           ),
         ),
-        home: Auth_Scren(),
+        home: StreamBuilder(
+          stream: FirebaseAuth.instance.authStateChanges(),
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              return ChatScreen();
+            }
+            return Auth_Scren();
+          },
+        ),
         routes: {},
       ),
     );

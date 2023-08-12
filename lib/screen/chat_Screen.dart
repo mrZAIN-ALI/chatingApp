@@ -1,6 +1,9 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 //
 import 'package:cloud_firestore/cloud_firestore.dart';
+import '../widget/chat/new_Message.dart';
+import '../widget/chat/messages.dart';
 
 class ChatScreen extends StatelessWidget {
   const ChatScreen({super.key});
@@ -10,35 +13,44 @@ class ChatScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text("Your Chat"),
+        actions: [
+          DropdownButton(
+            icon: Icon(Icons.more_vert),
+            items: [
+              DropdownMenuItem(
+                child: Container(
+                  decoration:
+                      BoxDecoration(border: Border.all(color: (Colors.black))),
+                  child: Row(
+                    children: [
+                      Icon(Icons.exit_to_app),
+                      SizedBox(
+                        width: 8,
+                      ),
+                      Text("Logout")
+                    ],
+                  ),
+                ),
+                value: "Logout",
+              ),
+            ],
+            onChanged: (value) {
+              if (value == "Logout") {
+                FirebaseAuth.instance.signOut();
+              }
+            },
+          )
+        ],
       ),
-      body: StreamBuilder(
-        stream: FirebaseFirestore.instance
-            .collection("chats/Szd4bRarYvsFYY12oKC5/messages")
-            .snapshots(),
-        builder: (context, snapshot) {
-          if(snapshot.connectionState == ConnectionState.waiting){
-            return Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-          final msgs_Collection = snapshot.data!.docs;
-          return ListView.builder(
-            itemCount: msgs_Collection.length,
-            itemBuilder: (context, index) => Container(
-              padding: EdgeInsets.all(10),
-              child: Text(msgs_Collection[index]["text"]),
-            ),
-          );
-        },
+      body: Container(
+        child: Column(
+          children: [
+            Expanded(child: Messages()),
+            NewMessage(),
+          ],
+        ),
       ),
-      floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.woman_2_outlined),
-        onPressed: () {
-          FirebaseFirestore.instance.collection("chats/Szd4bRarYvsFYY12oKC5/messages").add({
-            "text":"This was added by clicking lady",
-          },);
-        },
-      ),
+      
     );
   }
 }

@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/services.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 //
 import '../widget/auth/authForm.dart';
 
@@ -10,13 +13,71 @@ class Auth_Scren extends StatefulWidget {
 }
 
 class _Auth_ScrenState extends State<Auth_Scren> {
+  //
+  final _auth = FirebaseAuth.instance;
+  var _isLoading = false;
   void _submitFormData(
-    String email,
-    String userName,
-    String password,
+    String email_,
+    String userName_,
+    String password_,
     bool isLogedIn,
-  ) {}
+    BuildContext context,
+  ) async {
+    UserCredential authResult;
 
+    try {
+      setState(() {
+        _isLoading = true;
+      });
+      if (isLogedIn) {
+        authResult = await _auth.signInWithEmailAndPassword(
+            email: email_, password: password_);
+      } else {
+        authResult = await _auth.createUserWithEmailAndPassword(
+            email: email_, password: password_);
+
+        await FirebaseFirestore.instance
+            .collection("users")
+            .doc(authResult.user!.uid)
+            .set({
+          "email": email_,
+          "userName": userName_,
+        });
+      }
+    } on PlatformException catch (err) {
+      var message = "error occured please check credentials";
+      if (err.message != null) {
+        message = err.message.toString();
+      }
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            message,
+          ),
+          backgroundColor: Theme.of(context).colorScheme.error,
+        ),
+      );
+      setState(() {
+        _isLoading = false;
+      });
+    } catch (error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            error.toString(),
+          ),
+          backgroundColor: Theme.of(context).colorScheme.error,
+        ),
+      );
+      print("Printing error " + error.toString());
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  //
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -31,7 +92,7 @@ class _Auth_ScrenState extends State<Auth_Scren> {
             end: Alignment.bottomLeft,
           ),
         ),
-        child: Auth_Form(_submitFormData),
+        child: Auth_Form(submitFormFun: _submitFormData, isLoading: _isLoading),
       ),
     );
   }
