@@ -13,11 +13,17 @@ class MessageBubble extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
+      mainAxisAlignment:  isMe ? MainAxisAlignment.end :MainAxisAlignment.start,
       children: [
         Container(
           decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.primary,
-            borderRadius: BorderRadius.circular(12),
+            color: isMe ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.secondary,
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(12),
+              topRight: Radius.circular(12),
+              bottomLeft: !isMe ? Radius.circular(0) : Radius.circular(12),
+              bottomRight: isMe ? Radius.circular(0) : Radius.circular(12),
+            ),
           ),
           width: 150,
           padding: EdgeInsets.symmetric(vertical: 10, horizontal: 16),
