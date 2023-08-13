@@ -9,14 +9,22 @@ class Messages extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: (FirebaseAuth.instance.currentUser) ,
+    return FutureBuilder<User?>(
+      future: Future(() => (FirebaseAuth.instance.currentUser),),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Center(
             child: CircularProgressIndicator(),
           );
         }
+        if (snapshot.hasError) {
+          return Center(
+            child: Text("Error: ${snapshot.error}"),
+          );
+        }
+
+        final currentUser = snapshot.data;
+
         return StreamBuilder(
           stream: FirebaseFirestore.instance
               .collection("chat")
@@ -28,6 +36,11 @@ class Messages extends StatelessWidget {
                 child: CircularProgressIndicator(),
               );
             }
+            if (chatsnapshot.hasError) {
+              return Center(
+                child: Text("Error: ${chatsnapshot.error}"),
+              );
+            }
 
             final chatDocs = chatsnapshot.data!.docs;
 
@@ -37,7 +50,7 @@ class Messages extends StatelessWidget {
               itemBuilder: (context, index) {
                 return MessageBubble(
                   chatDocs[index]["text"],
-                  chatDocs[index]["userId"] == snapshot.data!.uid,
+                  chatDocs[index]["userId"] == currentUser?.uid,
                 );
               },
             );
