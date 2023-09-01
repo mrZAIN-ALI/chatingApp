@@ -20,12 +20,13 @@ class _NewMessageState extends State<NewMessage> {
     FocusScope.of(context).unfocus();
     // final userId= await FirebaseAuth.instance.currentUser!.getIdToken;
     final userInfo = (await FirebaseAuth.instance.currentUser); // Using 'uid' to get the user's ID
-  
+    final userData= await FirebaseFirestore.instance.collection("users").doc(userInfo!.uid).get();
      FirebaseFirestore.instance.collection("chat").add(
       {
         "text": _enteredMessage,
         "timeSent": Timestamp.now(),
         "userId": userInfo!.uid,
+        "userName": userData["userName"],
       },
     );
     _messsageFieldController.clear();
@@ -55,6 +56,7 @@ class _NewMessageState extends State<NewMessage> {
             onPressed:
                 _enteredMessage.toString().trim().isEmpty ? null : _sendMessage,
             icon: Icon(Icons.send),
+            color: _enteredMessage.toString().trim().isEmpty ? Colors.black : Theme.of(context).colorScheme.primary,
           ),
         ],
       ),

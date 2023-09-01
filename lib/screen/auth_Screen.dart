@@ -1,7 +1,11 @@
+import 'dart:io';
+
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:image_picker/image_picker.dart';
 //
 import '../widget/auth/authForm.dart';
 
@@ -21,6 +25,7 @@ class _Auth_ScrenState extends State<Auth_Scren> {
     String userName_,
     String password_,
     bool isLogedIn,
+    XFile image,
     BuildContext context,
   ) async {
     UserCredential authResult;
@@ -35,6 +40,16 @@ class _Auth_ScrenState extends State<Auth_Scren> {
       } else {
         authResult = await _auth.createUserWithEmailAndPassword(
             email: email_, password: password_);
+        
+        final refToFile =
+            FirebaseStorage.instance.ref().child("userProfile_images").child(
+                  "${authResult.user!.uid}.jpg",
+                );
+        await refToFile.putFile(
+          (File(
+            image.path,
+          )),
+        ).whenComplete;
 
         await FirebaseFirestore.instance
             .collection("users")
