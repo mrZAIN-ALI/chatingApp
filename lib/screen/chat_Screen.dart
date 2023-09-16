@@ -51,8 +51,8 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   void initState() {
     // TODO: implement initState
-    requestPermission();
-    onForegroudMSG();
+    // requestPermission();
+    // onForegroudMSG();
     super.initState();
   }
 
