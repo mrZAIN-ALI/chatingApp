@@ -19,6 +19,7 @@ class Auth_Scren extends StatefulWidget {
 class _Auth_ScrenState extends State<Auth_Scren> {
   //
   final _auth = FirebaseAuth.instance;
+  
   var _isLoading = false;
   void _submitFormData(
     String email_,
@@ -40,24 +41,29 @@ class _Auth_ScrenState extends State<Auth_Scren> {
       } else {
         authResult = await _auth.createUserWithEmailAndPassword(
             email: email_, password: password_);
-        
+        final _uid=authResult.user!.uid;
+        // print("printitng uid $_uid");
         final refToFile =
             FirebaseStorage.instance.ref().child("userProfile_images").child(
-                  "${authResult.user!.uid}.jpg",
+                  "${_uid}.jpg",
                 );
-        await refToFile.putFile(
+        final snapshot =await refToFile.putFile(
           (File(
             image.path,
           )),
-        ).whenComplete;
-
+        ).whenComplete(() => null);
+        
+        final url=  await snapshot.ref.getDownloadURL();
+        print("url $url: ");
         await FirebaseFirestore.instance
             .collection("users")
-            .doc(authResult.user!.uid)
+            .doc(_uid)
             .set({
           "email": email_,
           "userName": userName_,
+          "profile_image" : url
         });
+        print("signuoo done");
       }
     } on PlatformException catch (err) {
       var message = "error occured please check credentials";
@@ -77,18 +83,18 @@ class _Auth_ScrenState extends State<Auth_Scren> {
         _isLoading = false;
       });
     } catch (error) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            error.toString(),
-          ),
-          backgroundColor: Theme.of(context).colorScheme.error,
-        ),
-      );
-      print("Printing error " + error.toString());
-      setState(() {
-        _isLoading = false;
-      });
+      // ScaffoldMessenger.of(context).showSnackBar(
+      //   SnackBar(
+      //     content: Text(
+      //       error.toString(),
+      //     ),
+      //     backgroundColor: Theme.of(context).colorScheme.error,
+      //   ),
+      // );
+      print("Printing error " + error.toString()); 
+      // setState(() {
+      //   _isLoading = false;
+      // });
     }
   }
 

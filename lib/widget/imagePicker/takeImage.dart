@@ -17,6 +17,8 @@ class _TakeImageState extends State<TakeImage> {
     final imagePicker = ImagePicker();
     final tookImage= await imagePicker.pickImage(
       source: ImageSource.camera,
+      imageQuality: 50,
+      maxWidth: 150,      
     );
     if(tookImage!=null){
 
@@ -25,7 +27,7 @@ class _TakeImageState extends State<TakeImage> {
     });
     }
 
-    widget.takeImageFunction(_tookImage as XFile);
+    widget.takeImageFunction(_tookImage ?? null as XFile);
   }
 
   //

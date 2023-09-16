@@ -27,6 +27,7 @@ class _NewMessageState extends State<NewMessage> {
         "timeSent": Timestamp.now(),
         "userId": userInfo!.uid,
         "userName": userData["userName"],
+        "userImage": userData["profile_image"],
       },
     );
     _messsageFieldController.clear();

@@ -59,7 +59,7 @@ class _Auth_FormState extends State<Auth_Form> {
         _userName.trim(),
         _password.trim(),
         _isLogin,
-        _userProfileImage as XFile,
+        _userProfileImage ?? null as XFile,
         context,
       );
     }
